@@ -11,10 +11,31 @@
             url: "/Home/Keywords?SPHostUrl=" + hostUrl,
             success: function (data) {
 
+                var bannedCharacters = ['"', ';', '<', '>', '|'];
+                var bannedCharactersLength = bannedCharacters.length;
+                var bannedCharactersMessage = $("#bannedCharacters");
+
                 $('#taxonomyPickerID').tagit({
                     fieldName: "taxonomyPickerName",
                     availableTags: data,
-                    allowSpaces: true
+                    allowSpaces: true,
+                    beforeTagAdded: function (event, ui) {
+                        
+                        if (!ui.duringInitialization) {
+
+                            var _tagLabel = ui.tagLabel;
+
+                            for (var i = 0; i < bannedCharactersLength; i++) {
+                                if (_tagLabel.indexOf(bannedCharacters[i]) != -1) {
+                                    bannedCharactersMessage.show();
+                                    return false;
+                                }
+                                else {
+                                    bannedCharactersMessage.hide();
+                                }
+                            }
+                        }
+                    }
                 });
 
                 /******Usage of the Tag-It plugin.************/
